@@ -227,20 +227,12 @@ def plan_operation(root, state, operation, payload):
     if not state.get('solution'):
         raise ValueError('Save the worked solution before planning lessons')
     if operation == 'plan-propose':
-        required(payload, ('scope', 'pacing', 'lessons'))
+        from teaching import validate_plan
         if state.get('plan', {}).get('status') == 'approved':
             raise ValueError('Approved plans require adaptation operations')
-        if not payload['scope'] or not payload['pacing'] or not isinstance(payload['lessons'], list) or not payload['lessons']:
-            raise ValueError('Plan requires scope, pacing and lessons')
-        ids = set()
+        validate_plan(payload)
         for lesson in payload['lessons']:
-            required(lesson, ('id', 'kind', 'title', 'objectives', 'prerequisites', 'minutes'))
-            if not isinstance(lesson['id'], str) or not lesson['id'] or lesson['id'] in ids or not lesson['title'] or not isinstance(lesson['objectives'], list) or not lesson['objectives'] or not isinstance(lesson['prerequisites'], list) or not isinstance(lesson['minutes'], int) or lesson['minutes'] <= 0:
-                raise ValueError('Lessons require unique IDs, objectives, prerequisites and positive minutes')
-            ids.add(lesson['id'])
             lesson['progress'] = 'not-started'
-        if payload['lessons'][0]['kind'] != 'instructions':
-            raise ValueError('First lesson must address assignment instructions')
         old = state.get('plan')
         if old:
             state.setdefault('plan_history', []).append(old)
@@ -316,3 +308,4 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+

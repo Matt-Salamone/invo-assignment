@@ -63,3 +63,17 @@ class ReportTests(WorkspaceTestCase):
         record = list(repaired['imports'].values())[-1]
         self.assertEqual(record['repair_of'], rejected_id)
         self.assertEqual(record['outcome'], 'applied')
+
+    def test_two_pending_reviews_cannot_apply_same_packet_twice(self):
+        state, report = self.prepare_report()
+        self.operation('packet-abandon', {'packet_id': state['active_packet'], 'decision_record': 'Student stopped lesson'})
+        first = self.operation('report-import', report)
+        first_id = list(first['imports'])[-1]
+        report['observations'][0]['assistance'] = 'No hints; independently answered'
+        second = self.operation('report-import', report)
+        second_id = list(second['imports'])[-1]
+        review = {'import_id': first_id, 'relevant_observations': [0], 'include_errors': True, 'reason': 'Task unchanged'}
+        self.operation('report-review', review)
+        review['import_id'] = second_id
+        self.operation('report-review', review, ok=False)
+        self.assertEqual(len(self.run_cli(self.root / 'assignment', 'status')['evidence']), 1)

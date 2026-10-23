@@ -2,6 +2,7 @@
 import hashlib
 import json
 import uuid
+from eligibility import context_ready
 
 
 def mailbox(root, packet, safe_path):
@@ -17,7 +18,8 @@ def operation(root, state, command, payload, safe_path, save_state):
         if not active or payload.get('packet_id') != active:
             raise ValueError('Operation must identify the outstanding packet')
         if command == 'packet-resume':
-            if packets[active].get('review_required'):
+            active_lesson = next((lesson for lesson in state.get('plan', {}).get('lessons', []) if lesson['id'] == packets[active]['lesson_id']), None)
+            if packets[active].get('review_required') or not active_lesson or not context_ready(state, active_lesson):
                 raise ValueError('Outstanding packet requires review before continuation')
             mailbox(root, packets[active], safe_path)
             return state
@@ -39,6 +41,8 @@ def operation(root, state, command, payload, safe_path, save_state):
     lesson = next((lesson for lesson in plan['lessons'] if lesson['id'] == payload.get('lesson_id')), None)
     if not lesson:
         raise ValueError('Unknown lesson')
+    if not context_ready(state, lesson):
+        raise ValueError('Review changed lesson context before issuing a packet')
     assessment = payload.get('size_assessment')
     if not isinstance(assessment, dict) or any(not isinstance(assessment.get(key), str) or not assessment[key].strip() for key in ('basis', 'relevance', 'uncertainty')) or not isinstance(assessment.get('limitations'), list):
         raise ValueError('Record size/relevance basis, uncertainty and limitations')

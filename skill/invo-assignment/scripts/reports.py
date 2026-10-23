@@ -97,6 +97,10 @@ def review(root, state, payload, safe_path, save_state):
     validate(report, state)
     if any(type(i) is not int or i < 0 or i >= len(report['observations']) for i in indices) or len(set(indices)) != len(indices):
         raise ValueError('Invalid relevant observation index')
+    if indices and any(other['id'] != record['id'] and other.get('packet_id') == report['packet_id'] and other['outcome'] == 'applied' for other in state.get('imports', {}).values()):
+        record.update(outcome='rejected', reason='Evidence for this packet was applied while relevance review was pending')
+        save_state(root, state)
+        raise ValueError(record['reason'])
     record['relevance_review'] = payload
     if indices:
         apply(root, state, record, report, indices, payload['include_errors'], safe_path)

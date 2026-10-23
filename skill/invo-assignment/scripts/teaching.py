@@ -1,6 +1,7 @@
 """Evidence-based adaptations, separate student decisions and final handoff."""
 from copy import deepcopy
 import uuid
+from eligibility import context_ready, evidence_usable
 
 
 def text(record, key):
@@ -51,7 +52,7 @@ def operation(root, state, command, payload, save_state, write_plan, safe_path):
                 old = previous.get(lesson['id'], {})
                 # Changed objectives require new evidence, even under an existing lesson ID.
                 if old.get('objectives') == lesson['objectives']:
-                    for field in ('progress', 'remaining_gaps', 'recommendation', 'adaptations'):
+                    for field in ('progress', 'remaining_gaps', 'recommendation', 'adaptations', 'context_review_required'):
                         if field in old:
                             lesson[field] = deepcopy(old[field])
                 else:
@@ -75,11 +76,13 @@ def operation(root, state, command, payload, save_state, write_plan, safe_path):
                 raise ValueError('Resolve outstanding teaching before completion')
             overrides = {o['lesson_id']: o['choice'] for o in state.get('progression_overrides', []) if o['plan_version'] == plan['version']}
             for lesson in plan['lessons']:
+                if not context_ready(state, lesson):
+                    raise ValueError('Review changed lesson context before completing the plan; use explicit early handoff to finish with unresolved reviews')
                 if overrides.get(lesson['id']) == 'revisit':
                     raise ValueError('Student chose to revisit a lesson')
                 if overrides.get(lesson['id']) == 'continue':
                     continue
-                observed = [o['criterion'] for e in state.get('evidence', []) if e['lesson_id'] == lesson['id'] for o in e['observations'] if o['evidence_level'] == 'independent']
+                observed = [o['criterion'] for e in state.get('evidence', []) if e['lesson_id'] == lesson['id'] and evidence_usable(state, e) for o in e['observations'] if o['evidence_level'] == 'independent']
                 if lesson.get('remaining_gaps') or not set(lesson['objectives']).issubset(observed) or lesson.get('recommendation') != 'continue':
                     raise ValueError('Plan has incomplete evidence; revisit or record student choice')
         else:
