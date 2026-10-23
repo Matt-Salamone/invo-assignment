@@ -17,3 +17,5 @@ For `plan-propose` and `plan-approve`, read [teaching plan payload and approval]
 For `packet-issue`, `packet-resume`, `packet-replace`, `packet-abandon`, read [manual handoff and packet payload](packets.md).
 
 For `report-import` and `report-review`, read [returned evidence, stale review and repair](reports.md).
+
+For `suspicion-record`, `investigation-record`, `correction-apply`, `solution-impact-review`, read [investigations and teaching-context impact](corrections.md).
