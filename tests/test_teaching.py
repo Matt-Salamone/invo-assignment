@@ -1,9 +1,9 @@
-from tests.test_reports import ReportTests as _ReportTests
+from tests import test_reports
 from tests.support import WorkspaceTestCase
 
 
 class TeachingTests(WorkspaceTestCase):
-    prepare_report = _ReportTests.prepare_report
+    prepare_report = test_reports.ReportTests.prepare_report
 
     def test_incomplete_plan_can_only_finish_with_explicit_early_choice(self):
         state, report = self.prepare_report()
