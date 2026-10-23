@@ -6,7 +6,7 @@ The reusable skill and workspace helpers live in `skill/invo-assignment`. See [i
 
 ## Specification and design
 
-- [Implementation specification](.scratch/assignment-workflow/spec.md), tracked locally with status `ready-for-agent`.
+- [Implementation specification](.scratch/assignment-workflow/spec.md), implemented; all ten local tickets are resolved.
 - [UML design record and previews](docs/design/README.md).
 
 ## Workflow

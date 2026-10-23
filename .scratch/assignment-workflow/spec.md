@@ -1,6 +1,6 @@
 # invo-assignment: assignment completion and learning workflow
 
-Status: ready-for-agent
+Status: resolved
 Type: spec
 Date: 2026-10-23
 
@@ -183,3 +183,7 @@ The workflow diagrams describe proposed design rather than existing software. Th
 The author agreed to the workflow through proposed design v2 and the installation/workspace boundary design. This specification consolidates those decisions and the confirmed testing boundary. Command names, implementation language, exact internal layout, and field spelling remain implementation choices under the contracts above. There are no known unresolved product decisions blocking this specification.
 
 The related [invo-learn project](https://github.com/Matt-Salamone/invo-learn) is a reference for manual packets and reports, not a required dependency. The [official skill guidance](https://learn.chatgpt.com/docs/build-skills) describes reusable skill directories and installation; the initial release targets standalone installation.
+
+## Implementation outcome
+
+Implemented on integration branch codex/assignment-workflow. All ten tickets are resolved. Twenty-three synthetic public-operation tests pass, including full-cycle restoration and regressions for correction-impact eligibility, duplicate relevance-review imports, and shared plan validation. Standards and spec reviews completed; all actionable findings were fixed. Instruction dry-run scenarios are documented in docs/testing-dry-runs.md; live lesson usability remains for personal assessment.
