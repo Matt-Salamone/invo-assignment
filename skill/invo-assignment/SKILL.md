@@ -8,7 +8,7 @@ description: Complete and verify an assignment, then prepare individually reques
 Operate from the student's separate assignment repository. Read [workspace operations](references/operations.md) before initialization or any bookkeeping operation. Use the installed script with an explicit workspace path.
 
 1. Initialize or resume the assignment. Read the returned identity, status and next action. Existing state and durable files govern a fresh planning conversation.
-2. Gather instructions and course materials. Establish deliverables, constraints, grading criteria and consequential uncertainties. Ask for optional deadline and lesson duration. Preserve originals. Explain tools, output and fidelity limits and obtain permission before intake conversions.
+2. Gather instructions and course materials using [intake records and conversion decisions](references/intake.md). Complete the durable requirements and source inventory, including explicit gaps. Ask for optional deadline and lesson duration. Preserve originals. Obtain actual permission after explaining tools, output and fidelity limits before intake conversions.
 3. Produce a complete worked solution and verify every deliverable with assignment-appropriate checks. Record limitations and make the solution immediately accessible.
 4. Propose a teaching plan beginning with understanding the instructions and including necessary prerequisites. Obtain initial plan approval.
 5. Issue a self-contained lesson packet only when requested. The student manually uploads it to a fresh chatbot and returns its evidence report. Preserve issued snapshots; maintain one outstanding packet. Resume, replace or abandon explicitly.
