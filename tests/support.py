@@ -15,6 +15,14 @@ class WorkspaceTestCase(unittest.TestCase):
         artifact.write_text('Synthetic worked example', encoding='utf-8')
         return self.operation('solution-save', {'artifacts': [{'source': str(artifact), 'path': 'answer.txt'}], 'checks': [{'deliverable': 'Example', 'result': 'passed', 'method': 'Inspect example', 'evidence': 'Complete example inspected', 'rubric_coverage': []}], 'limitations': []})
 
+    def prepare_plan(self):
+        self.prepare_solution()
+        self.operation('plan-propose', {'scope': 'Explain example', 'pacing': 'Ten minutes', 'lessons': [{'id': 'instructions', 'kind': 'instructions', 'title': 'Understand the task', 'objectives': ['Explain required example'], 'prerequisites': [], 'minutes': 10}]})
+        return self.operation('plan-approve', {'version': 1, 'decision_record': 'Student approved'})
+
+    def packet_payload(self):
+        return {'lesson_id': 'instructions', 'request_record': 'Student requested this lesson', 'assignment_context': 'Create one synthetic example and explain it.', 'context': [], 'size_assessment': {'basis': 'One short example and task description', 'relevance': 'All content addresses the objective', 'uncertainty': 'Chatbot limit unknown', 'limitations': []}}
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='invo-synthetic-')
         self.addCleanup(self.temp.cleanup)

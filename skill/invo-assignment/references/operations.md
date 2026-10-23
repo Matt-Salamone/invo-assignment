@@ -13,3 +13,5 @@ For `intake-save` and the three `conversion-*` operations, read [intake payloads
 For `solution-save --input <JSON-file>`, read [solution artifacts and verification](solution.md).
 
 For `plan-propose` and `plan-approve`, read [teaching plan payload and approval](plan.md).
+
+For `packet-issue`, `packet-resume`, `packet-replace`, `packet-abandon`, read [manual handoff and packet payload](packets.md).
