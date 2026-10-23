@@ -10,3 +10,6 @@ venv/
 .env
 .env.*
 !.env.example
+
+# Temporary implementation worktrees
+.worktrees/
