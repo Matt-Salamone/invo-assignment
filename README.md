@@ -1,6 +1,6 @@
 # invo-assignment
 
-A planned agent skill for completing a college assignment as a worked solution, teaching its reasoning through manually transferred lesson packets and reports, and then prompting the student to create their own original version.
+A reusable agent skill for completing a college assignment as a worked solution, teaching its reasoning through manually transferred lesson packets and reports, and then prompting the student to create their own original version.
 
 The reusable skill and workspace helpers live in `skill/invo-assignment`. See [installation instructions](docs/installation.md).
 
@@ -9,7 +9,7 @@ The reusable skill and workspace helpers live in `skill/invo-assignment`. See [i
 - [Implementation specification](.scratch/assignment-workflow/spec.md), tracked locally with status `ready-for-agent`.
 - [UML design record and previews](docs/design/README.md).
 
-## Intended workflow
+## Workflow
 
 1. Install the reusable skill once and initialize a separate local assignment project.
 2. Provide instructions and course materials. The planning agent creates and verifies a worked solution, then proposes a teaching plan.
@@ -27,5 +27,5 @@ This is the public development repository for reusable instructions, scripts, te
 
 Specs and tickets use the local Markdown tracker under `.scratch/`; creating this GitHub repository does not change the tracker to GitHub Issues. See [AGENTS.md](AGENTS.md) and the configuration documents it references.
 
-The project is built first for the author's personal use, with future sharing supported by the reusable skill format. Next: derive implementation tickets from the specification.
+The project is built first for the author's personal use, with future sharing supported by the reusable skill format. Run synthetic public-operation checks with `python -m unittest discover -v`. See [instruction dry-run scenarios](docs/testing-dry-runs.md) for complementary usability checks.
 
