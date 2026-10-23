@@ -1,0 +1,12 @@
+# Local tooling and operating-system files
+.DS_Store
+Thumbs.db
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local environment secrets
+.env
+.env.*
+!.env.example

@@ -1,0 +1,91 @@
+@startuml
+' Designation: proposed design; accepted in the 2026-10-23 design conversation.
+' Supporting specification: ../../.scratch/assignment-workflow/spec.md
+' Acceptance and rendering record: README.md
+title Proposed design v2 — 1. Intake, solution, and plan
+hide footbox
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 420
+actor Student
+participant "Planning agent" as Agent
+participant "Lesson chatbot\n(fresh chat per lesson)" as Tutor
+
+Student -> Agent : Assignment instructions and course materials;\noptional deadline and preferred lesson length
+Agent -> Agent : Create separate local assignment workspace\nand Git history outside the public skill repository
+Agent -> Student : Confirm interpretation and clarify consequential gaps
+opt Material conversion needed
+  Agent -> Student : Explain tools, outputs, and fidelity limits; request permission
+  Student -> Agent : Approve conversion, or decline
+  Agent -> Agent : Run only approved conversions; preserve originals\nand identify remaining information gaps
+end
+group Stage 1 — Complete the assignment
+  Agent -> Agent : Create worked solution using course materials;\ndistinguish external sources and record support
+  Agent -> Agent : Check required deliverables and correctness;\nrecord unresolved limitations and save Git version
+  Agent -> Student : Make completed worked solution immediately accessible;\nexplain verification results and limitations
+end
+group Prepare stage 2 — Teach the assignment
+  Agent -> Agent : Plan lessons beginning with assignment instructions;\ninclude necessary prerequisites and realistic pacing
+  Agent -> Student : Propose lesson plan and flag time constraints
+  Student -> Agent : Review and approve plan, with revisions as needed
+end
+note over Student, Tutor
+Continue with the lesson cycle on page 2.
+end note
+
+newpage Proposed design v2 — 2. Lesson cycle and final handoff
+
+loop Each lesson, until plan complete or student overrides progression
+  Student -> Agent : Request next lesson
+  Agent -> Agent : Resolve any outstanding packet: resume, replace,\nor abandon; preserve packet and report history
+  Agent -> Agent : Select lesson context; assess packet size\nand extraneous information for the target chatbot
+  opt Selected material is too large or includes excessive irrelevant content
+    Agent -> Agent : Summarize and/or create trimmed derivative files\n(e.g., a PDF containing only relevant lecture slides)
+    Agent -> Agent : Check lesson-critical details are retained; preserve originals\nand record source files, page/slide references, and limitations
+  end
+  Agent -> Student : Stage self-contained mailbox packet with selected sources,\nsolution context, lesson instructions, and JSON report template
+  note over Student, Agent
+  One outstanding packet per assignment.
+  Packets identify assignment, lesson, and solution version.
+  end note
+  Student -> Tutor : Manually upload packet to a fresh chatbot session
+  opt Useful to gauge prior knowledge
+    Tutor -> Student : Short opening assessment
+    Student -> Tutor : Answers
+  end
+  Tutor -> Student : Teach and adapt to demonstrated knowledge;\nask for explanations, justifications, and follow-up answers
+  Student -> Tutor : Work through lesson and answer questions
+  Tutor -> Student : JSON report: identifiers, solution version, actual answers,\nassistance, understanding evidence, and suspected errors
+  Student -> Agent : Manually return report
+  Agent -> Agent : Validate report and version relevance;\nrepair malformed reports without inventing evidence
+  note over Student, Agent
+  Missing evidence may require student input.
+  Invalid or stale reports do not automatically establish progress.
+  end note
+  opt Suspected solution error, from any source
+    Agent -> Agent : Investigate against instructions, sources, and reasoning
+    opt Error confirmed
+      Agent -> Agent : Correct solution and record revertible Git revision;\nreview affected packets, lessons, and prior evidence
+      Agent -> Student : Inform student of correction; no permission required
+    end
+  end
+  Agent -> Agent : Update progress and adapt plan from valid evidence
+  alt Substantial scope or workload change
+    Agent -> Student : Request approval for revised plan
+    Student -> Agent : Approve or adjust revision
+  else Routine adaptation
+    Agent -> Agent : Apply adjustment automatically
+  end
+  Agent -> Student : Report progress and recommend next step;\nstudent may override progression
+end
+group Stage 3 — Student creates their own version
+  Agent -> Student : Now create your own version of the assignment
+end
+note over Student, Agent
+The prescribed workflow ends here.
+No additional phase-three process is specified.
+end note
+@enduml

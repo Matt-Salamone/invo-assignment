@@ -1,0 +1,31 @@
+@startuml
+' Designation: proposed design; accepted in the 2026-10-23 design conversation.
+' Supporting specification: ../../.scratch/assignment-workflow/spec.md
+' Acceptance and rendering record: README.md
+!pragma layout smetana
+title Proposed installation and workspace boundaries
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+skinparam componentStyle rectangle
+top to bottom direction
+package "Public source repository" {
+  component "Skill instructions, scripts,\ntemplates, synthetic examples" as Source
+}
+package "User-level skill installation\n(not an assignment repository)" {
+  component "Installed skill copy" as Installed
+}
+package "Separate local assignment Git repository" {
+  component "Planning agent" as Agent
+  artifact "Materials, worked solution, plan,\nmailbox packets, reports, Git history" as Work
+}
+Source .down.> Installed : install / update
+Agent .up.> Installed : read instructions; invoke helpers
+Agent -down-> Work : write within explicit workspace
+note bottom of Work
+One repository per assignment.
+Store separately from skill source
+and installed skill directories.
+end note
+@enduml
