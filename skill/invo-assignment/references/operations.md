@@ -11,3 +11,5 @@ All new workflow commands extend this script's operation interface. Use `safe_pa
 For `intake-save` and the three `conversion-*` operations, read [intake payloads and decision flow](intake.md). Each takes `--input <JSON-file>`; the input file may be outside the workspace, while outputs remain confined to it.
 
 For `solution-save --input <JSON-file>`, read [solution artifacts and verification](solution.md).
+
+For `plan-propose` and `plan-approve`, read [teaching plan payload and approval](plan.md).

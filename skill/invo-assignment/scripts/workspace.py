@@ -211,6 +211,54 @@ def solution_save(root, state, payload):
     return state
 
 
+def write_plan(root, plan):
+    path = safe_path(root, 'teaching/plan.md')
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = ['# Teaching plan', '', 'Status: ' + plan['status'], 'Version: ' + str(plan['version']), '', plan['scope'], '', 'Pacing: ' + plan['pacing']]
+    if plan.get('decision_record'):
+        lines += ['', 'Approval: ' + plan['decision_record']]
+    for lesson in plan['lessons']:
+        lines += ['', '## ' + lesson['title'], 'Lesson ID: ' + lesson['id'], 'Minutes: ' + str(lesson['minutes']), 'Progress: ' + lesson['progress'], 'Prerequisites: ' + ', '.join(lesson['prerequisites'])]
+        lines += ['- ' + objective for objective in lesson['objectives']]
+    path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+
+def plan_operation(root, state, operation, payload):
+    if not state.get('solution'):
+        raise ValueError('Save the worked solution before planning lessons')
+    if operation == 'plan-propose':
+        required(payload, ('scope', 'pacing', 'lessons'))
+        if state.get('plan', {}).get('status') == 'approved':
+            raise ValueError('Approved plans require adaptation operations')
+        if not payload['scope'] or not payload['pacing'] or not isinstance(payload['lessons'], list) or not payload['lessons']:
+            raise ValueError('Plan requires scope, pacing and lessons')
+        ids = set()
+        for lesson in payload['lessons']:
+            required(lesson, ('id', 'kind', 'title', 'objectives', 'prerequisites', 'minutes'))
+            if not isinstance(lesson['id'], str) or not lesson['id'] or lesson['id'] in ids or not lesson['title'] or not isinstance(lesson['objectives'], list) or not lesson['objectives'] or not isinstance(lesson['prerequisites'], list) or not isinstance(lesson['minutes'], int) or lesson['minutes'] <= 0:
+                raise ValueError('Lessons require unique IDs, objectives, prerequisites and positive minutes')
+            ids.add(lesson['id'])
+            lesson['progress'] = 'not-started'
+        if payload['lessons'][0]['kind'] != 'instructions':
+            raise ValueError('First lesson must address assignment instructions')
+        old = state.get('plan')
+        if old:
+            state.setdefault('plan_history', []).append(old)
+        plan = dict(payload, version=(old['version'] + 1 if old else 1), status='proposed')
+        state['plan'] = plan
+        state['next_action'] = 'approve-teaching-plan'
+    else:
+        required(payload, ('version', 'decision_record'))
+        plan = state.get('plan')
+        if not plan or plan['status'] != 'proposed' or plan['version'] != payload['version'] or not isinstance(payload['decision_record'], str) or not payload['decision_record'].strip():
+            raise ValueError('Approval requires current proposed version and actual student decision')
+        plan.update(status='approved', decision_record=payload['decision_record'])
+        state.update(status='teaching', next_action='request-lesson')
+    write_plan(root, state['plan'])
+    save_state(root, state)
+    return state
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', required=True, type=Path)
@@ -219,7 +267,7 @@ def main():
     init.add_argument('--name')
     commands.add_parser('status', help='Recover assignment identity, saved status and next action')
     commands.add_parser('intake-save', help='Persist requirements and preserve source originals').add_argument('--input', required=True, type=Path)
-    for name in ('conversion-propose', 'conversion-decide', 'conversion-complete', 'solution-save'):
+    for name in ('conversion-propose', 'conversion-decide', 'conversion-complete', 'solution-save', 'plan-propose', 'plan-approve'):
         commands.add_parser(name).add_argument('--input', required=True, type=Path)
     args = parser.parse_args()
     try:
@@ -232,6 +280,8 @@ def main():
             state = conversion(root, state, args.command, json.loads(args.input.read_text(encoding='utf-8')))
         elif args.command == 'solution-save':
             state = solution_save(root, state, json.loads(args.input.read_text(encoding='utf-8')))
+        elif args.command.startswith('plan-'):
+            state = plan_operation(root, state, args.command, json.loads(args.input.read_text(encoding='utf-8')))
         print(json.dumps(state, indent=2))
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         print(str(error), file=sys.stderr)

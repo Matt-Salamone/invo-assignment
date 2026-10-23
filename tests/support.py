@@ -8,6 +8,13 @@ import unittest
 CLI = Path(__file__).resolve().parents[1] / 'skill/invo-assignment/scripts/workspace.py'
 
 class WorkspaceTestCase(unittest.TestCase):
+    def prepare_solution(self):
+        self.run_cli(self.root / 'assignment', 'init')
+        self.operation('intake-save', {'deliverables': ['Example'], 'constraints': [], 'grading_criteria': [], 'uncertainties': [], 'assumptions': [], 'sources': []})
+        artifact = self.root / 'answer.txt'
+        artifact.write_text('Synthetic worked example', encoding='utf-8')
+        return self.operation('solution-save', {'artifacts': [{'source': str(artifact), 'path': 'answer.txt'}], 'checks': [{'deliverable': 'Example', 'result': 'passed', 'method': 'Inspect example', 'evidence': 'Complete example inspected', 'rubric_coverage': []}], 'limitations': []})
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='invo-synthetic-')
         self.addCleanup(self.temp.cleanup)
