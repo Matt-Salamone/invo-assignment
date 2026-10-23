@@ -274,7 +274,7 @@ def main():
     report_import.add_argument('--repair-of')
     report_import.add_argument('--repair-note')
     commands.add_parser('report-review').add_argument('--input', required=True, type=Path)
-    for name in ('suspicion-record', 'investigation-record', 'correction-apply', 'solution-impact-review'):
+    for name in ('suspicion-record', 'investigation-record', 'correction-apply', 'solution-impact-review', 'solution-restore'):
         commands.add_parser(name).add_argument('--input', required=True, type=Path)
     args = parser.parse_args()
     try:
@@ -304,7 +304,7 @@ def main():
         elif args.command == 'report-review':
             import reports
             state = reports.review(root, state, json.loads(args.input.read_text(encoding='utf-8')), safe_path, save_state)
-        elif args.command in ('suspicion-record', 'investigation-record', 'correction-apply', 'solution-impact-review'):
+        elif args.command in ('suspicion-record', 'investigation-record', 'correction-apply', 'solution-impact-review', 'solution-restore'):
             import corrections
             state = corrections.operation(root, state, args.command, json.loads(args.input.read_text(encoding='utf-8')), safe_path, save_state, git)
         print(json.dumps(state, indent=2))

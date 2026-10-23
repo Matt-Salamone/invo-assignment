@@ -25,7 +25,7 @@ def mark_impact(state, before, after, reason):
 
 def commit_solution(root, git, message):
     git(root, 'add', '--', 'solution')
-    git(root, '-c', 'user.name=invo-assignment', '-c', 'user.email=invo-assignment@localhost', 'commit', '-m', message)
+    git(root, '-c', 'user.name=invo-assignment', '-c', 'user.email=invo-assignment@localhost', 'commit', '--allow-empty', '-m', message)
     return git(root, 'rev-parse', 'HEAD')
 
 
@@ -37,7 +37,39 @@ def ensure_clean_solution(root, git):
 def operation(root, state, command, payload, safe_path, save_state, git):
     if not state.get('solution'):
         raise ValueError('A saved solution is required')
-    if command == 'suspicion-record':
+    if command == 'solution-restore':
+        text_fields(payload, ('revision', 'reason'))
+        target = next((s for s in state.get('solution_history', []) if s['revision'] == payload['revision']), None)
+        if not target or target['revision'] == state['solution']['revision']:
+            raise ValueError('Restore requires a recorded earlier solution revision')
+        ensure_clean_solution(root, git)
+        import subprocess
+        outputs = {}
+        for part in [*target['artifacts'], 'solution/verification.json']:
+            if not part.startswith('solution/'):
+                raise ValueError('Invalid recorded solution path')
+            path = safe_path(root, part)
+            if not path.is_relative_to(safe_path(root, 'solution')):
+                raise ValueError('Invalid recorded solution destination')
+            outputs[path] = subprocess.run(['git', '-C', str(root), 'show', target['revision'] + ':' + part], capture_output=True, check=True).stdout
+        removed = [safe_path(root, part) for part in state['solution']['artifacts'] if part not in target['artifacts']]
+        for path in removed:
+            if not path.is_relative_to(safe_path(root, 'solution')):
+                raise ValueError('Invalid current solution artifact')
+        previous = copy.deepcopy(state['solution'])
+        for path, content in outputs.items():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+        for path in removed:
+            path.unlink()
+        revision = commit_solution(root, git, 'Restore worked solution ' + target['revision'] + ': ' + payload['reason'])
+        state.setdefault('solution_history', []).append(previous)
+        state['solution'] = copy.deepcopy(target)
+        state['solution']['revision'] = revision
+        impact = mark_impact(state, previous['revision'], revision, payload['reason'])
+        state.setdefault('restorations', []).append({'revision': revision, 'restored_from': target['revision'], 'before': previous['revision'], 'reason': payload['reason'], 'impact_id': impact['id']})
+        state.setdefault('notifications', []).append({'kind': 'solution-restoration', 'revision': revision, 'message': 'Restored earlier solution ' + target['revision'] + ': ' + payload['reason']})
+    elif command == 'suspicion-record':
         text_fields(payload, ('source', 'claim', 'reasoning', 'source_reference'))
         record = dict(payload, id=str(uuid.uuid4()), status='uninvestigated', solution_revision=state['solution']['revision'])
         state.setdefault('suspected_errors', []).append(record)
