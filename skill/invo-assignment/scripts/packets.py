@@ -66,6 +66,11 @@ def operation(root, state, command, payload, safe_path, save_state):
         copied = 'context/' + str(index) + '-' + source.name
         outputs[copied] = content
         included.append({'source': original, 'path': copied, 'reference': reference, 'bytes': len(content), 'sha256': hashlib.sha256(content).hexdigest()})
+        derivation = next((r for r in state.get('reductions', {}).values() if r['path'] == original), None)
+        if derivation:
+            if hashlib.sha256(content).hexdigest() != derivation['sha256']:
+                raise ValueError('Derivative changed since retention verification; prepare a new reduction')
+            included[-1]['derivation'] = derivation
     # Uncommitted solution edits must never masquerade as the recorded solution revision.
     import subprocess
     diff = subprocess.run(['git', '-C', str(root), 'diff', '--exit-code', metadata['solution_revision'], '--', *state['solution']['artifacts']], capture_output=True)

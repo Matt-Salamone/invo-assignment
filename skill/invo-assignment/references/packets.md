@@ -1,5 +1,7 @@
 # Manual lesson packet handoff
 
+When context is oversized or excessively extraneous, follow [context reduction](reductions.md) before issuance. Include registered derivatives in `context`; their provenance, retention evidence and omissions are preserved in the issued manifest alongside the actual derivative bytes.
+
 Issue one lesson only after the student requests it and the current plan is approved. Read `status` first. `active_packet` identifies the outstanding packet; all snapshots remain in `packets` keyed by immutable UUID. The mailbox file `mailbox/current.json` points to its preserved upload folder. Link that folder and tell the student to manually upload every file in it to a fresh chatbot, then manually return the resulting JSON report. Keep the complete worked solution independently accessible.
 
 `packet-issue --input <JSON-file>` example:
