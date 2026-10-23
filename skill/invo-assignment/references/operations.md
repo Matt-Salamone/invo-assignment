@@ -15,3 +15,5 @@ For `solution-save --input <JSON-file>`, read [solution artifacts and verificati
 For `plan-propose` and `plan-approve`, read [teaching plan payload and approval](plan.md).
 
 For `packet-issue`, `packet-resume`, `packet-replace`, `packet-abandon`, read [manual handoff and packet payload](packets.md).
+
+For `report-import` and `report-review`, read [returned evidence, stale review and repair](reports.md).
