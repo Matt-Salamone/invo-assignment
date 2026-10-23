@@ -3,11 +3,6 @@ from tests.support import WorkspaceTestCase
 
 
 class IntakeTests(WorkspaceTestCase):
-    def operation(self, command, payload, ok=True):
-        file = self.root / 'payload.json'
-        file.write_text(json.dumps(payload), encoding='utf-8')
-        return self.run_cli(self.root / 'assignment', command, '--input', str(file), ok=ok)
-
     def test_capture_requirements_and_trace_supplied_original(self):
         target = self.root / 'assignment'
         self.run_cli(target, 'init')
@@ -39,3 +34,4 @@ class IntakeTests(WorkspaceTestCase):
         self.assertEqual(state['conversions']['text']['status'], 'complete')
         self.assertEqual((self.root / 'assignment/materials/derived/slide.txt').read_text(), 'Halves')
         self.assertEqual(source.read_text(), 'Slide 1: halves')
+

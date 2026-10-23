@@ -168,6 +168,49 @@ def conversion(root, state, operation, payload):
     return state
 
 
+def solution_save(root, state, payload):
+    required(payload, ('artifacts', 'checks', 'limitations'))
+    if state.get('solution'):
+        raise ValueError('Initial solution exists; use correction operations for later changes')
+    if not state.get('intake') or not isinstance(payload['checks'], list) or not isinstance(payload['limitations'], list) or not payload['artifacts']:
+        raise ValueError('Solution requires intake, artifacts, checks and limitations')
+    checked = set()
+    for check in payload['checks']:
+        required(check, ('deliverable', 'result', 'method', 'evidence', 'rubric_coverage'))
+        if check['result'] not in ('passed', 'failed', 'limited') or not check['method'] or not check['evidence'] or not isinstance(check['rubric_coverage'], list):
+            raise ValueError('Checks need result, method, evidence and rubric coverage')
+        checked.add(check['deliverable'])
+    if not set(state['intake']['deliverables']).issubset(checked):
+        raise ValueError('Every required deliverable needs a verification record')
+    covered = {criterion for check in payload['checks'] for criterion in check['rubric_coverage']}
+    if not set(state['intake']['grading_criteria']).issubset(covered):
+        raise ValueError('Every grading criterion needs recorded coverage')
+    if any(check['result'] != 'passed' for check in payload['checks']) and not payload['limitations']:
+        raise ValueError('Failed or limited checks need explicit limitations')
+    outputs = {}
+    for artifact in payload['artifacts']:
+        required(artifact, ('source', 'path'))
+        destination = safe_path(root, 'solution/' + artifact['path'])
+        if not inside(destination, safe_path(root, 'solution')) or destination.name == 'verification.json' or destination.exists() or destination in outputs:
+            raise ValueError('Solution artifact must be a unique new file under solution')
+        outputs[destination] = Path(artifact['source']).read_bytes()
+    verification = safe_path(root, 'solution/verification.json')
+    if verification.exists():
+        raise ValueError('Existing solution verification must be preserved')
+    outputs[verification] = (json.dumps({'checks': payload['checks'], 'limitations': payload['limitations']}, indent=2) + '\n').encode()
+    if git(root, 'diff', '--cached', '--name-only'):
+        raise ValueError('Unrelated staged changes must be committed or unstaged before saving solution')
+    for destination, content in outputs.items():
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(content)
+    git(root, 'add', '--', 'solution')
+    git(root, '-c', 'user.name=invo-assignment', '-c', 'user.email=invo-assignment@localhost', 'commit', '-m', 'Save initial worked solution and verification')
+    state['solution'] = {'revision': git(root, 'rev-parse', 'HEAD'), 'artifacts': ['solution/' + a['path'] for a in payload['artifacts']], 'checks': payload['checks'], 'limitations': payload['limitations']}
+    state.update(status='solution-ready', next_action='propose-teaching-plan')
+    save_state(root, state)
+    return state
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', required=True, type=Path)
@@ -176,7 +219,7 @@ def main():
     init.add_argument('--name')
     commands.add_parser('status', help='Recover assignment identity, saved status and next action')
     commands.add_parser('intake-save', help='Persist requirements and preserve source originals').add_argument('--input', required=True, type=Path)
-    for name in ('conversion-propose', 'conversion-decide', 'conversion-complete'):
+    for name in ('conversion-propose', 'conversion-decide', 'conversion-complete', 'solution-save'):
         commands.add_parser(name).add_argument('--input', required=True, type=Path)
     args = parser.parse_args()
     try:
@@ -187,6 +230,8 @@ def main():
             state = intake_save(root, state, json.loads(args.input.read_text(encoding='utf-8')))
         elif args.command.startswith('conversion-'):
             state = conversion(root, state, args.command, json.loads(args.input.read_text(encoding='utf-8')))
+        elif args.command == 'solution-save':
+            state = solution_save(root, state, json.loads(args.input.read_text(encoding='utf-8')))
         print(json.dumps(state, indent=2))
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         print(str(error), file=sys.stderr)

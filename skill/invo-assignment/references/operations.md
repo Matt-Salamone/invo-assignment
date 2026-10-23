@@ -9,3 +9,5 @@ Choose a directory outside the source checkout, installed skill and every other 
 All new workflow commands extend this script's operation interface. Use `safe_path(root, relative)` for assignment output paths and `save_state` for durable updates. Preserve the state version and unknown fields when adding workflow records.
 
 For `intake-save` and the three `conversion-*` operations, read [intake payloads and decision flow](intake.md). Each takes `--input <JSON-file>`; the input file may be outside the workspace, while outputs remain confined to it.
+
+For `solution-save --input <JSON-file>`, read [solution artifacts and verification](solution.md).

@@ -19,3 +19,9 @@ class WorkspaceTestCase(unittest.TestCase):
         return json.loads(result.stdout) if ok else result.stderr
 
 
+    def operation(self, command, payload, ok=True):
+        file = self.root / 'payload.json'
+        file.write_text(json.dumps(payload), encoding='utf-8')
+        return self.run_cli(self.root / 'assignment', command, '--input', str(file), ok=ok)
+
+
