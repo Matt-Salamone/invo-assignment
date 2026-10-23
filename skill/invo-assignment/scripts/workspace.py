@@ -269,6 +269,11 @@ def main():
     commands.add_parser('intake-save', help='Persist requirements and preserve source originals').add_argument('--input', required=True, type=Path)
     for name in ('conversion-propose', 'conversion-decide', 'conversion-complete', 'solution-save', 'plan-propose', 'plan-approve', 'packet-issue', 'packet-resume', 'packet-replace', 'packet-abandon'):
         commands.add_parser(name).add_argument('--input', required=True, type=Path)
+    report_import = commands.add_parser('report-import')
+    report_import.add_argument('--input', required=True, type=Path)
+    report_import.add_argument('--repair-of')
+    report_import.add_argument('--repair-note')
+    commands.add_parser('report-review').add_argument('--input', required=True, type=Path)
     args = parser.parse_args()
     try:
         root = args.workspace.expanduser().resolve()
@@ -285,6 +290,12 @@ def main():
         elif args.command.startswith('packet-'):
             import packets
             state = packets.operation(root, state, args.command, json.loads(args.input.read_text(encoding='utf-8')), safe_path, save_state)
+        elif args.command == 'report-import':
+            import reports
+            state = reports.import_report(root, state, args.input.read_bytes(), safe_path, save_state, args.repair_of, args.repair_note)
+        elif args.command == 'report-review':
+            import reports
+            state = reports.review(root, state, json.loads(args.input.read_text(encoding='utf-8')), safe_path, save_state)
         print(json.dumps(state, indent=2))
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         print(str(error), file=sys.stderr)
