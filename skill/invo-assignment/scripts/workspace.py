@@ -267,7 +267,7 @@ def main():
     init.add_argument('--name')
     commands.add_parser('status', help='Recover assignment identity, saved status and next action')
     commands.add_parser('intake-save', help='Persist requirements and preserve source originals').add_argument('--input', required=True, type=Path)
-    for name in ('conversion-propose', 'conversion-decide', 'conversion-complete', 'solution-save', 'plan-propose', 'plan-approve', 'packet-issue', 'packet-resume', 'packet-replace', 'packet-abandon'):
+    for name in ('conversion-propose', 'conversion-decide', 'conversion-complete', 'solution-save', 'plan-propose', 'plan-approve', 'packet-issue', 'packet-resume', 'packet-replace', 'packet-abandon', 'reduction-save'):
         commands.add_parser(name).add_argument('--input', required=True, type=Path)
     args = parser.parse_args()
     try:
@@ -282,6 +282,9 @@ def main():
             state = solution_save(root, state, json.loads(args.input.read_text(encoding='utf-8')))
         elif args.command.startswith('plan-'):
             state = plan_operation(root, state, args.command, json.loads(args.input.read_text(encoding='utf-8')))
+        elif args.command == 'reduction-save':
+            import reductions
+            state = reductions.save(root, state, json.loads(args.input.read_text(encoding='utf-8')), safe_path, save_state)
         elif args.command.startswith('packet-'):
             import packets
             state = packets.operation(root, state, args.command, json.loads(args.input.read_text(encoding='utf-8')), safe_path, save_state)
