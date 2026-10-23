@@ -17,3 +17,4 @@ Operate from the student's separate assignment repository. Read [workspace opera
 8. When teaching is complete or the student chooses the final handoff, prompt them to create their own original version. The prescribed workflow ends there.
 
 Select assignment-specific reasoning, checks and lesson scope through judgment. Deterministic workspace operations maintain records; they cannot establish the honesty or quality of learner evidence.
+
