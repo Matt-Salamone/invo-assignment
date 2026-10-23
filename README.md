@@ -2,7 +2,7 @@
 
 A planned agent skill for completing a college assignment as a worked solution, teaching its reasoning through manually transferred lesson packets and reports, and then prompting the student to create their own original version.
 
-**Status: specification ready for implementation.** This repository currently contains the specification, UML design, and development workflow configuration. An installable skill and its helpers have not been implemented yet.
+The reusable skill and workspace helpers live in `skill/invo-assignment`. See [installation instructions](docs/installation.md).
 
 ## Specification and design
 
@@ -28,3 +28,4 @@ This is the public development repository for reusable instructions, scripts, te
 Specs and tickets use the local Markdown tracker under `.scratch/`; creating this GitHub repository does not change the tracker to GitHub Issues. See [AGENTS.md](AGENTS.md) and the configuration documents it references.
 
 The project is built first for the author's personal use, with future sharing supported by the reusable skill format. Next: derive implementation tickets from the specification.
+
