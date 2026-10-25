@@ -61,6 +61,16 @@ shared beds for flexible participation. Include no real course or student data.
 
 ## Manual handoff, recovery, and correction
 
+Start with old intake files and a nested directory in `mailbox`, then request a
+lesson whose source count exceeds the saved upload budget. Inspect `mailbox`:
+only the new packet's flat upload files should remain, within the budget. Check
+that displaced materials are preserved outside it, combined sources retain their
+content and page references, and all tutor/report instructions are embedded.
+Drag all mailbox files into one fresh chatbot turn and send Go. Observe whether
+teaching begins without additional setup or uploads. Resume and replace the
+packet to check mailbox refresh, and complete or abandon it to check an empty
+mailbox. This live usability check is separate from automated packaging checks.
+
 1. With one packet outstanding, request another. Check the explicit resume,
    replace, or abandon choices; preserve the issued snapshot and identifiers.
 2. Return a malformed report and a report missing an actual learner response.

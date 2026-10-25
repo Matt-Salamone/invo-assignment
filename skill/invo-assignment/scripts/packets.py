@@ -3,12 +3,7 @@ import hashlib
 import json
 import uuid
 from eligibility import context_ready
-
-
-def mailbox(root, packet, safe_path):
-    path = safe_path(root, 'mailbox/current.json')
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(packet, indent=2) + '\n', encoding='utf-8')
+from uploads import build, mailbox, preserve, profile
 
 
 def operation(root, state, command, payload, safe_path, save_state):
@@ -21,7 +16,17 @@ def operation(root, state, command, payload, safe_path, save_state):
             active_lesson = next((lesson for lesson in state.get('plan', {}).get('lessons', []) if lesson['id'] == packets[active]['lesson_id']), None)
             if packets[active].get('review_required') or not active_lesson or not context_ready(state, active_lesson):
                 raise ValueError('Outstanding packet requires review before continuation')
-            mailbox(root, packets[active], safe_path)
+            packet = packets[active]
+            if not packet.get('upload_files'):
+                chosen = profile(state, payload)
+                names = ['tutor.md', 'report-template.json', 'report-contract.json', 'manifest.json']
+                names.extend(entry['path'] for entry in packet['included'])
+                snapshot = {name: safe_path(root, packet['path'] + '/' + name).read_bytes() for name in names}
+                outputs = build(packet, snapshot, chosen)
+                preserve(root, packet, outputs, chosen, safe_path)
+                state['upload_profile'] = chosen
+            mailbox(root, packet, safe_path)
+            save_state(root, state)
             return state
         if not isinstance(payload.get('decision_record'), str) or not payload['decision_record'].strip():
             raise ValueError('Replacement or abandonment needs an explicit student decision')
@@ -86,16 +91,20 @@ def operation(root, state, command, payload, safe_path, save_state):
     tutor += '\n\nLesson: ' + lesson['title'] + '\nObjectives:\n' + '\n'.join('- ' + o for o in lesson['objectives'])
     tutor += '\n\nUse the included context and source manifest; this fresh chat has no planning history. Optionally begin with a short assessment. Ask the student to explain reasoning, justify choices and answer targeted follow-up questions. Adapt explanations and practice to actual responses. Distinguish covered topics, understanding with assistance and independent understanding.\n\nReturn JSON using report-template.json and report-contract.json. Each observation records criterion, actual question, learner_response, assistance, and evidence_level (covered/assisted/independent). Record remaining_gaps and suspected_errors with claim, reasoning and source_reference. Never invent learner responses or claim software-verified independence. The student manually returns the report to the planning agent.\n'
     outputs.update({'tutor.md': tutor.encode(), 'report-template.json': json.dumps(report, indent=2).encode(), 'report-contract.json': json.dumps(contract, indent=2).encode(), 'manifest.json': json.dumps(dict(metadata, included=included, size_assessment=assessment), indent=2).encode()})
+    chosen = profile(state, payload)
+    packet = dict(metadata, path=relative, status='outstanding', request_record=payload['request_record'], included=included, size_assessment=assessment, total_bytes=sum(len(content) for content in outputs.values()))
+    upload_outputs = build(packet, outputs, chosen)
     # Resolve every destination before writing any packet file.
     destinations = [(safe_path(root, relative + '/' + name), content) for name, content in outputs.items()]
     for destination, content in destinations:
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(content)
-    packet = dict(metadata, path=relative, status='outstanding', request_record=payload['request_record'], included=included, size_assessment=assessment, total_bytes=sum(len(content) for content in outputs.values()))
+    preserve(root, packet, upload_outputs, chosen, safe_path)
     if active:
         packets[active].update(status='replaced', decision_record=payload['decision_record'], replaced_by=pid)
     packets[pid] = packet
     state.update(active_packet=pid, next_action='return-lesson-report')
+    state['upload_profile'] = chosen
     mailbox(root, packet, safe_path)
     save_state(root, state)
     return state

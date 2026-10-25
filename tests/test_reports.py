@@ -23,6 +23,7 @@ class ReportTests(WorkspaceTestCase):
         self.operation('report-import', dict(report, observations=[]), ok=False)
         valid = self.operation('report-import', report)
         self.assertIsNone(valid['active_packet'])
+        self.assertEqual(list((self.root / 'assignment/mailbox').iterdir()), [])
         self.assertEqual(valid['plan']['lessons'][0]['progress'], 'independent')
         duplicate = self.operation('report-import', report)
         self.assertEqual(len(duplicate['evidence']), 1)

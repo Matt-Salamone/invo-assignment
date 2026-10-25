@@ -46,8 +46,8 @@ def apply(root, state, record, report, indices, include_errors, safe_path):
     if state.get('active_packet') == report['packet_id']:
         state['packets'][report['packet_id']]['status'] = 'completed'
         state['active_packet'] = None
-        pointer = safe_path(root, 'mailbox/current.json')
-        pointer.write_text('null\n', encoding='utf-8')
+        from uploads import mailbox
+        mailbox(root, None, safe_path)
     state['next_action'] = 'review-progress'
 
 

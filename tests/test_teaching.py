@@ -11,6 +11,7 @@ class TeachingTests(WorkspaceTestCase):
         self.operation('final-handoff', {'mode': 'early'}, ok=False)
         handed = self.operation('final-handoff', {'mode': 'early', 'decision_record': 'Student chooses own version now'})
         self.assertIsNone(handed['active_packet'])
+        self.assertEqual(list((self.root / 'assignment/mailbox').iterdir()), [])
         self.assertEqual(handed['packets'][state['active_packet']]['status'], 'abandoned')
         self.assertTrue((self.root / 'assignment' / state['packets'][state['active_packet']]['path']).exists())
 

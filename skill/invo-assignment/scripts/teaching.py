@@ -90,7 +90,8 @@ def operation(root, state, command, payload, save_state, write_plan, safe_path):
         if state.get('active_packet'):
             state['packets'][state['active_packet']].update(status='abandoned', decision_record=payload['decision_record'])
             state['active_packet'] = None
-            safe_path(root, 'mailbox/current.json').write_text('null\n', encoding='utf-8')
+            from uploads import mailbox
+            mailbox(root, None, safe_path)
         state['final_handoff'] = dict(payload, prompt='Create your own original version of the assignment.', plan_version=plan['version'])
         state.update(status='own-version', next_action='create-own-original-version')
     write_plan(root, state['plan'])

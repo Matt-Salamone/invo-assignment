@@ -13,11 +13,11 @@ The reusable skill and workspace helpers live in `skill/invo-assignment`. See [i
 
 1. Install the reusable skill once and initialize a separate local assignment project.
 2. Provide instructions and course materials. The planning agent creates and verifies a worked solution, then proposes a teaching plan.
-3. Request each lesson, upload its self-contained packet to a fresh chatbot, complete it, and return its JSON report manually.
+3. Request each lesson, drag every file directly from `mailbox` into a fresh chatbot and send Go, complete the lesson, and return its JSON report manually. The mailbox contains only a flat upload set within the saved attachment budget (ten files by default).
 4. The planning agent adapts the plan and investigates potential mistakes. Confirmed corrections are explained and saved in revertible solution history.
 5. Create your own version of the assignment when prompted.
 
-Packets may include summaries or trimmed documents to fit the lesson and chatbot context. Original material and source references are preserved.
+Packets combine text and, when necessary, PDF/image sources to fit the attachment budget. They may also include summaries or trimmed documents to fit the lesson and chatbot context. Original material, immutable packet snapshots, upload views, and source references are preserved outside the mailbox.
 
 ## Repository boundaries
 
