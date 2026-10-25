@@ -89,6 +89,28 @@ mailbox. This live usability check is separate from automated packaging checks.
    recovers current solution revision, plan, evidence, outstanding packet, and
    pending reviews from durable files before recommending the next action.
 
+## Source access inside combined attachments
+
+Use synthetic assignment instructions with sections named Goal, Required changes,
+and Deliverable, a notebook containing markdown and code cells, and a relevant
+figure. Include enough sources to exercise the existing combining behavior.
+
+1. Upload only the flat mailbox files to a fresh chatbot and send Go. At the first
+   requirements checkpoint, verify that it shows the relevant instruction text
+   with the original title and section before asking for the learner's
+   interpretation. The learner can answer without locating that text in a bundle.
+2. At a notebook checkpoint, verify that the tutor retrieves the relevant cell
+   from the combined text and displays readable prose or formatted code with its
+   original source/cell reference. It should leave the reasoning being assessed
+   to the learner rather than supply the answer with the excerpt.
+3. At a visual checkpoint, verify that the tutor displays the relevant visual when
+   supported or gives a faithful description, an exact attachment/page locator,
+   and any access limitations. Check merged-page references against the upload
+   layout. Missing content must be identified rather than invented.
+4. Verify that any request to open the learner's project serves an actual editing
+   or execution exercise and includes the relevant snippet and location. Confirm
+   that upload counts, source bytes and report identifiers remain valid.
+
 ## Run record
 
 For each run record: date; skill revision; scenario; temporary workspace; evidence

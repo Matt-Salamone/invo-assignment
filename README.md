@@ -19,6 +19,8 @@ The reusable skill and workspace helpers live in `skill/invo-assignment`. See [i
 
 Packets combine text and, when necessary, PDF/image sources to fit the attachment budget. They may also include summaries or trimmed documents to fit the lesson and chatbot context. Original material, immutable packet snapshots, upload views, and source references are preserved outside the mailbox.
 
+The lesson chatbot is instructed to present relevant excerpts, code or visual context before asking about them, with clear source references, so the student can work in the chat without searching combined attachments.
+
 ## Repository boundaries
 
 This is the public development repository for reusable instructions, scripts, templates, synthetic examples, and tests. A user installs a copy of the skill separately, then keeps each personal assignment in its own local Git repository outside both the source checkout and installed skill directory.

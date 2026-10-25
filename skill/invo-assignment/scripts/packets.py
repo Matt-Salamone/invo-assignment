@@ -89,6 +89,16 @@ def operation(root, state, command, payload, safe_path, save_state):
     contract = {'version': 1, 'required': list(report), 'observation_fields': ['criterion', 'question', 'learner_response', 'assistance', 'evidence_level'], 'evidence_levels': ['covered', 'assisted', 'independent'], 'suspected_error_fields': ['claim', 'reasoning', 'source_reference']}
     tutor = '# Teach one lesson\n\n' + json.dumps(metadata, indent=2) + '\n\nAssignment: ' + payload['assignment_context']
     tutor += '\n\nLesson: ' + lesson['title'] + '\nObjectives:\n' + '\n'.join('- ' + o for o in lesson['objectives'])
+    tutor += '''
+
+## Present source material at the point of use
+
+Before asking the learner to read, interpret, compare or explain source material, retrieve it from the attachments and present the relevant content in the chat. Show assignment requirements or prose as a readable excerpt, and code as a formatted code block. Decode notebook JSON into its relevant markdown or code cells. For an image, diagram or merged PDF, display the relevant visual if supported; otherwise give a faithful description and an exact attachment/page locator, explaining any details you cannot access.
+
+Label each excerpt with the original source title and section, page or notebook cell when available. Use source boundaries, the manifest and the upload layout to locate bundled material yourself. Preserve exact requirement wording, numbers and constraints; distinguish source excerpts from your explanation. Include enough surrounding context to avoid changing the meaning, while keeping the material focused on the current checkpoint.
+
+The learner should be able to engage with the question from the content you present, without searching combined source files or opening provenance paths. Ask them to open their own project when the exercise requires editing or running it, giving the relevant snippet and location first. Present the source before the question, and leave the reasoning or answer being assessed to the learner. If required material cannot be retrieved, identify the gap rather than inventing it.
+'''
     tutor += '\n\nUse the included context and source manifest; this fresh chat has no planning history. Optionally begin with a short assessment. Ask the student to explain reasoning, justify choices and answer targeted follow-up questions. Adapt explanations and practice to actual responses. Distinguish covered topics, understanding with assistance and independent understanding.\n\nReturn JSON using report-template.json and report-contract.json. Each observation records criterion, actual question, learner_response, assistance, and evidence_level (covered/assisted/independent). Record remaining_gaps and suspected_errors with claim, reasoning and source_reference. Never invent learner responses or claim software-verified independence. The student manually returns the report to the planning agent.\n'
     outputs.update({'tutor.md': tutor.encode(), 'report-template.json': json.dumps(report, indent=2).encode(), 'report-contract.json': json.dumps(contract, indent=2).encode(), 'manifest.json': json.dumps(dict(metadata, included=included, size_assessment=assessment), indent=2).encode()})
     chosen = profile(state, payload)
