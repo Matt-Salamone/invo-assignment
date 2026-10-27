@@ -82,7 +82,8 @@ def operation(root, state, command, payload, save_state, write_plan, safe_path):
                     raise ValueError('Student chose to revisit a lesson')
                 if overrides.get(lesson['id']) == 'continue':
                     continue
-                observed = [o['criterion'] for e in state.get('evidence', []) if e['lesson_id'] == lesson['id'] and evidence_usable(state, e) for o in e['observations'] if o['evidence_level'] == 'independent']
+                from sidechat import effective_observations
+                observed = [o['criterion'] for e in state.get('evidence', []) if e['lesson_id'] == lesson['id'] and evidence_usable(state, e) for o in effective_observations(state, e) if o['evidence_level'] == 'independent']
                 if lesson.get('remaining_gaps') or not set(lesson['objectives']).issubset(observed) or lesson.get('recommendation') != 'continue':
                     raise ValueError('Plan has incomplete evidence; revisit or record student choice')
         else:

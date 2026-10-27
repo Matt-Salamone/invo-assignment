@@ -17,3 +17,6 @@ For malformed formatting, fix only information supported by the returned file, t
 On valid import, review actual evidence separately from inferred recommendations and student decisions. Suspected errors retain claim, reasoning, source location, originating report and solution revision for investigation; the report alone does not authorize accepting a purported correction as true.
 
 Relevance review rechecks whether another report for that packet was applied while this report awaited review. A conflicting later review is preserved as rejected and cannot duplicate progress or suspected errors.
+
+
+The same report-import command accepts report_type=side-chat using the embedded supplemental contract. It preserves separate supplemental_reports without adding formal observations or closing a packet. Either report may arrive first. Matching before-answer/unknown help qualifies the effective independence view; original evidence stays intact. Inspect unmatched help and remaining_questions during planning. Read [side-chat roles](side-chat.md).

@@ -79,6 +79,7 @@ def initialize(root, name):
     state = {'state_version': 1, 'assignment_id': str(uuid.uuid4()),
              'name': name or root.name, 'skill_version': (SKILL_ROOT / 'VERSION').read_text().strip(),
              'status': 'intake', 'next_action': 'capture-requirements'}
+    safe_path(root, 'AGENTS.md').write_text((SKILL_ROOT / 'references/workspace-guidance.md').read_text(encoding='utf-8'), encoding='utf-8')
     save_state(root, state)
     return state
 

@@ -43,3 +43,6 @@ Lifecycle commands take JSON through `--input`:
 - `packet-replace`: supply the full issuance payload plus `packet_id` identifying the active packet and `decision_record`. It creates a new UUID and snapshot, marking the former packet replaced. Invalid replacement inputs leave the active packet unchanged.
 
 Fresh-chat dry run: drag all files directly from `mailbox` into one fresh-chat turn and send Go. The chatbot should begin teaching immediately and know the task, objective, worked example, source/page references, assessment approach, and exact report identifiers. Verify that it presents relevant source content before asking about it, including when the original is inside a combined attachment. If it needs the planning chat, additional files, manual regrouping, or a second upload turn, repair the packet before handing it to the student.
+
+
+New packets embed role selection, useful UML guidance and a prefilled supplemental report template in tutor.md and therefore lesson.txt. Read [side-chat roles](side-chat.md). Upload the same complete set into either chat; Go selects the lesson and Side chat selects supplemental Q&A. Existing immutable packets retain their issued instructions.

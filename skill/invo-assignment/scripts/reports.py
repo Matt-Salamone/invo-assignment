@@ -48,6 +48,8 @@ def apply(root, state, record, report, indices, include_errors, safe_path):
         state['active_packet'] = None
         from uploads import mailbox
         mailbox(root, None, safe_path)
+    from sidechat import refresh
+    refresh(state, report['lesson_id'])
     state['next_action'] = 'review-progress'
 
 
@@ -64,6 +66,13 @@ def import_report(root, state, raw, safe_path, save_state, repair_of=None, repai
     imports[rid] = record
     try:
         report = json.loads(raw)
+        if isinstance(report, dict) and report.get('report_type') == 'side-chat':
+            import sidechat
+            sidechat.accept(state, record, report)
+            save_state(root, state)
+            return state
+        if isinstance(report, dict) and report.get('report_type', 'lesson') != 'lesson':
+            raise ValueError('Unknown report_type')
         packet = validate(report, state)
         # Canonical JSON makes whitespace-only resubmission idempotent.
         canonical = hashlib.sha256(json.dumps(report, sort_keys=True).encode()).hexdigest()

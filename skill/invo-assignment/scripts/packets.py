@@ -87,7 +87,8 @@ def operation(root, state, command, payload, safe_path, save_state):
         raise ValueError('Save or revert working solution edits before issuing a versioned packet')
     report = dict(metadata, observations=[], remaining_gaps=[], suspected_errors=[])
     contract = {'version': 1, 'required': list(report), 'observation_fields': ['criterion', 'question', 'learner_response', 'assistance', 'evidence_level'], 'evidence_levels': ['covered', 'assisted', 'independent'], 'suspected_error_fields': ['claim', 'reasoning', 'source_reference']}
-    tutor = '# Teach one lesson\n\n' + json.dumps(metadata, indent=2) + '\n\nAssignment: ' + payload['assignment_context']
+    from sidechat import instructions
+    tutor = instructions(metadata) + '# Teach one lesson\n\n' + json.dumps(metadata, indent=2) + '\n\nAssignment: ' + payload['assignment_context']
     tutor += '\n\nLesson: ' + lesson['title'] + '\nObjectives:\n' + '\n'.join('- ' + o for o in lesson['objectives'])
     tutor += '''
 

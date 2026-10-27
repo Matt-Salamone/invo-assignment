@@ -31,3 +31,6 @@ Specs and tickets use the local Markdown tracker under `.scratch/`; creating thi
 
 The project is built first for the author's personal use, with future sharing supported by the reusable skill format. Run synthetic public-operation checks with `python -m unittest discover -v`. See [instruction dry-run scenarios](docs/testing-dry-runs.md) for complementary usability checks.
 
+
+
+New packets support an optional side chat using the same upload set: send Go for the lesson or Side chat for supplemental Q&A. Reports remain separate, and assessment-related assistance qualifies independence. Both roles favor useful UML. Agents commit and push reviewed changes after each interaction; see AGENTS.md.

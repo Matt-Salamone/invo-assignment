@@ -42,3 +42,9 @@ No unresolved diagram assumptions are known to block implementation. Exact comma
 Rendered locally on 2026-10-23 with PlantUML 1.2024.8, OpenJDK 25.0.4.101, and Segoe UI. Sequence views use built-in layout; the installation view selects bundled Smetana. SVG and PNG were regenerated from each authoritative source. The actual PNG previews were inspected for readable labels, branches, arrows, and consistency with the specification.
 
 See [renderer configuration](../agents/uml-rendering.md) for reproducible commands. Source hashes identify the accepted publication snapshots; update the hashes if sources change, and obtain agreement on semantic revisions under the UML workflow.
+
+## Lesson and side-chat roles
+
+The October 27 accepted extension adds shared uploads, separate roles and reports,
+and assistance qualification without changing the original intake/solution flow.
+See the [supporting record and accepted diagram](lesson-side-chat-workflow.md).

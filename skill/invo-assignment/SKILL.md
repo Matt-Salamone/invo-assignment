@@ -16,4 +16,8 @@ Operate from the student's separate assignment repository. Read [workspace opera
 7. Follow [investigation, correction and impact review](references/corrections.md). Correct confirmed errors without further permission, preserve revision history, announce the change and assess affected packets and evidence. For an explicit request to restore earlier content, follow [solution restoration](references/restoration.md), preserving later history and unrelated files.
 8. When teaching is complete or the student chooses the final handoff, prompt them to create their own original version. The prescribed workflow ends there.
 
+Use [lesson and side-chat roles](references/side-chat.md) for new packets and supplemental reports. Favor useful UML in planning and teaching, accompanied by code/prose and other representations when clearer.
+
+Before ending every user interaction that changed workspace files, follow [workspace Git synchronization](references/workspace-guidance.md#commit-and-push-after-each-interaction): commit the reviewed changes and push the existing verified remote; report failures while preserving local work.
+
 Select assignment-specific reasoning, checks and lesson scope through judgment. Deterministic workspace operations maintain records; they cannot establish the honesty or quality of learner evidence.

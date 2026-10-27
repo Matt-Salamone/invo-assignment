@@ -11,3 +11,6 @@ Open a new folder outside both locations and outside any existing Git repository
 For updates, replace only the installed skill directory with a newer complete copy. Keep assignment repositories where they are; installation and updates never run workspace operations against them. Each initialized assignment records the installed skill version and state-format version. Updating tooling does not overwrite that recorded provenance.
 
 Developers run `python -m unittest discover -v` from this source checkout. Tests create synthetic repositories in the operating system temporary directory, outside this repository and installed tooling.
+
+
+New assignment initialization writes portable AGENTS.md guidance, including end-of-interaction commit/push and optional side-chat roles. Existing learner AGENTS.md files are preserved; update their guidance deliberately without rebuilding old packets. A missing remote keeps commits local and must be reported; no hosting is created implicitly.
