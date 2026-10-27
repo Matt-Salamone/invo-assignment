@@ -22,3 +22,7 @@ Learner records go only to the learner's verified private repository; public
 development checkouts contain reusable code, instructions and synthetic examples.
 This is an agent end-of-turn responsibility, including planning, preferences,
 intake and report work; direct helper calls do not perform it automatically.
+
+Before new packet preparation, read the installed skill's
+references/syntax-references.md. Coding lessons require a standalone neutral
+syntax-cheatsheet.md in the packet and mailbox within the saved upload budget.

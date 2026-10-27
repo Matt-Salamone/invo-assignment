@@ -121,7 +121,11 @@ def build(packet, snapshot, chosen):
         if len(content) != entry['bytes'] or hashlib.sha256(content).hexdigest() != entry['sha256']:
             raise ValueError('Packet snapshot digest mismatch: ' + entry['path'])
         suffix = Path(entry['path']).suffix.lower()
-        if suffix in TEXT_TYPES:
+        if entry.get('role') == 'syntax-reference':
+            attachments['syntax-cheatsheet.md'] = content
+            locations.append({'source': entry['source'], 'snapshot_path': entry['path'],
+                              'upload_file': 'syntax-cheatsheet.md', 'role': 'syntax-reference'})
+        elif suffix in TEXT_TYPES:
             try:
                 text = content.decode('utf-8')
             except UnicodeDecodeError as error:

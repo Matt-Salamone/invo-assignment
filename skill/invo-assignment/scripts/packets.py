@@ -53,6 +53,8 @@ def operation(root, state, command, payload, safe_path, save_state):
         raise ValueError('Record size/relevance basis, uncertainty and limitations')
     if not isinstance(payload.get('assignment_context'), str) or not payload['assignment_context'].strip() or not isinstance(payload.get('context'), list):
         raise ValueError('A self-contained packet needs assignment context and selected source list')
+    from syntax_reference import prepare, instructions as reference_instructions
+    reference_content = prepare(payload)
     pid = str(uuid.uuid4())
     relative = 'packets/' + pid
     folder = safe_path(root, relative)
@@ -80,6 +82,13 @@ def operation(root, state, command, payload, safe_path, save_state):
             if hashlib.sha256(content).hexdigest() != derivation['sha256']:
                 raise ValueError('Derivative changed since retention verification; prepare a new reduction')
             included[-1]['derivation'] = derivation
+    if reference_content is not None:
+        name = 'syntax-cheatsheet.md'
+        outputs[name] = reference_content
+        included.append({'source': 'Planner-authored neutral syntax reference', 'path': name,
+                         'reference': 'Permitted syntax lookup; not assessed reasoning',
+                         'role': 'syntax-reference', 'bytes': len(reference_content),
+                         'sha256': hashlib.sha256(reference_content).hexdigest()})
     # Uncommitted solution edits must never masquerade as the recorded solution revision.
     import subprocess
     diff = subprocess.run(['git', '-C', str(root), 'diff', '--exit-code', metadata['solution_revision'], '--', *state['solution']['artifacts']], capture_output=True)
@@ -88,7 +97,7 @@ def operation(root, state, command, payload, safe_path, save_state):
     report = dict(metadata, observations=[], remaining_gaps=[], suspected_errors=[])
     contract = {'version': 1, 'required': list(report), 'observation_fields': ['criterion', 'question', 'learner_response', 'assistance', 'evidence_level'], 'evidence_levels': ['covered', 'assisted', 'independent'], 'suspected_error_fields': ['claim', 'reasoning', 'source_reference']}
     from sidechat import instructions
-    tutor = instructions(metadata) + '# Teach one lesson\n\n' + json.dumps(metadata, indent=2) + '\n\nAssignment: ' + payload['assignment_context']
+    tutor = reference_instructions(reference_content is not None) + instructions(metadata) + '# Teach one lesson\n\n' + json.dumps(metadata, indent=2) + '\n\nAssignment: ' + payload['assignment_context']
     tutor += '\n\nLesson: ' + lesson['title'] + '\nObjectives:\n' + '\n'.join('- ' + o for o in lesson['objectives'])
     tutor += '''
 

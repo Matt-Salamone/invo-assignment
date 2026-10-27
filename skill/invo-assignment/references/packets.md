@@ -11,6 +11,7 @@ Issue one lesson only after the student requests it and the current plan is appr
 ```json
 {
   "lesson_id": "instructions",
+  "coding": false,
   "request_record": "Student asked to begin the instructions lesson",
   "assignment_context": "Create one fractions example and explain its derivation. Show each step; grading considers correctness and reasoning.",
   "context": [{"path": "materials/originals/lecture.txt", "reference": "Lecture 1, section on equivalent fractions"}],
@@ -46,3 +47,10 @@ Fresh-chat dry run: drag all files directly from `mailbox` into one fresh-chat t
 
 
 New packets embed role selection, useful UML guidance and a prefilled supplemental report template in tutor.md and therefore lesson.txt. Read [side-chat roles](side-chat.md). Upload the same complete set into either chat; Go selects the lesson and Side chat selects supplemental Q&A. Existing immutable packets retain their issued instructions.
+
+For new issuance payloads set `coding` explicitly. If true, supply
+`syntax_cheatsheet` with the complete neutral Markdown content. The helper saves
+`syntax-cheatsheet.md` separately in the snapshot and flat upload set, includes its
+digest in the manifest, counts it against the saved budget and restores it on
+resume. Read [syntax reference rules](syntax-references.md) before authoring it.
+If false, omit the reference. Legacy packets/specs remain readable unchanged.

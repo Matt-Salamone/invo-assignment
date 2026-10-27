@@ -34,3 +34,7 @@ The project is built first for the author's personal use, with future sharing su
 
 
 New packets support an optional side chat using the same upload set: send Go for the lesson or Side chat for supplemental Q&A. Reports remain separate, and assessment-related assistance qualifies independence. Both roles favor useful UML. Agents commit and push reviewed changes after each interaction; see AGENTS.md.
+
+Coding lessons include a preserved standalone `syntax-cheatsheet.md`, permitted
+during coding assessments without counting neutral lookup as assistance. Noncoding
+lessons omit it. See [syntax reference workflow](skill/invo-assignment/references/syntax-references.md).
