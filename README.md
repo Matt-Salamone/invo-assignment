@@ -1,3 +1,5 @@
+> This project has moved to [invo-learn](https://github.com/Matt-Salamone/invo-learn). This repository and the guidance below are retained as read-only history.
+
 # invo-assignment
 
 A reusable agent skill for completing a college assignment as a worked solution, teaching its reasoning through manually transferred lesson packets and reports, and then prompting the student to create their own original version.

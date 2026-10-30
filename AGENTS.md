@@ -1,3 +1,5 @@
+> This project has moved to [invo-learn](https://github.com/Matt-Salamone/invo-learn). This repository and the guidance below are retained as read-only history.
+
 # invo-assignment
 
 This repository develops the reusable invo-assignment skill. Keep personal assignment workspaces in separate repositories outside this repository and the installed skill directory. Use synthetic coursework for examples and tests.
